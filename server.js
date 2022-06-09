@@ -22,6 +22,12 @@ io.on('connection', socket => {
     //emit everyone
     // io.emit();
 
+    //listen for chat messages
+    socket.on('chatMessage',msg=>{
+        console.log(msg);
+        io.emit('message',msg);
+    })
+
     //runs whem client disconnects
     socket.on('disconnect',()=>{
         io.emit('message','A user has left the chat')
