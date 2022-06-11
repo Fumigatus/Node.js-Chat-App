@@ -11,7 +11,7 @@ const io = socketio(server);
 
 //runs when client connects
 io.on('connection', socket => {
-    console.log('Hello World');
+    // console.log('Hello World');
 
     //emit single user
     socket.emit('message', 'Welcome to Chat App');
@@ -26,12 +26,12 @@ io.on('connection', socket => {
     socket.on('chatMessage',msg=>{
         console.log(msg);
         io.emit('message',msg);
-    })
+    });
 
     //runs whem client disconnects
     socket.on('disconnect',()=>{
         io.emit('message','A user has left the chat')
-    })
+    });
 })
 
 app.use(express.static(path.join(__dirname, 'public')));
