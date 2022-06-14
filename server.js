@@ -3,7 +3,7 @@ const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
 const { formatMessages } = require('./utils/messages');
-const { getUser, userJoin } = require('./utils/users');
+const { getUser, userJoin, leaveUser, roomUser } = require('./utils/users');
 
 require('dotenv').config();
 
@@ -30,17 +30,21 @@ io.on('connection', socket => {
 
         //join chatroom
         //emit everyone except the connected user
-        socket.broadcast.to(user.room).emit('message', formatMessages(botName, `${username} joined to chat`));
+        socket.broadcast.to(user.room).emit('message', formatMessages(botName, `${user.username} joined to chat`));
     });
     //listen for chat messages
     socket.on('chatMessage', msg => {
+        const user = getUser(socket.id);
         console.log(msg);
-        io.emit('message', formatMessages('username', msg));
+        io.to(user.room).emit('message', formatMessages(user.username, msg));
     });
 
     //runs whem client disconnects
     socket.on('disconnect', () => {
-        io.emit('message', formatMessages(botName, `A user has left the chat`));
+        const user = leaveUser(socket.id);
+        if(user){
+            io.to(user.room).emit('message', formatMessages(botName, `${user.username} has left the chat`));
+        }
     });
 })
 
