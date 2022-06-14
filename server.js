@@ -31,6 +31,12 @@ io.on('connection', socket => {
         //join chatroom
         //emit everyone except the connected user
         socket.broadcast.to(user.room).emit('message', formatMessages(botName, `${user.username} joined to chat`));
+
+        //get room and users info
+        io.to(user.room).emit('roomUsers', {
+            room: user.room,
+            users: roomUser(user.room),
+        })
     });
     //listen for chat messages
     socket.on('chatMessage', msg => {
@@ -42,8 +48,14 @@ io.on('connection', socket => {
     //runs whem client disconnects
     socket.on('disconnect', () => {
         const user = leaveUser(socket.id);
-        if(user){
+        if (user) {
             io.to(user.room).emit('message', formatMessages(botName, `${user.username} has left the chat`));
+
+            //get room and users info
+            io.to(user.room).emit('roomUsers', {
+                room: user.room,
+                users: roomUser(user.room),
+            })
         }
     });
 })

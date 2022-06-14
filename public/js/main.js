@@ -1,5 +1,7 @@
 const chatFrom = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
+const roomName = document.getElementById('room-name');
+const userList = document.getElementById('users');
 
 const socket = io();
 
@@ -18,6 +20,12 @@ socket.on('message', message => {
 
     //scroll messages
     chatMessages.scrollTop = chatMessages.scrollHeight;
+})
+
+//get room and users info
+socket.on('roomUsers', ({ room, users }) => {
+    outputRoomName(room);
+    outputUserList(users);
 })
 
 //message submit
@@ -44,4 +52,17 @@ function outputMessage(message) {
     <p class="text">${message.text}
     </p>`;
     document.querySelector('.chat-messages').appendChild(div);
+}
+
+function outputRoomName(room) {
+    roomName.innerHTML = room;
+}
+
+function outputUserList(users) {
+    userList.innerHTML = '';
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.innerHTML = user.username;
+        userList.appendChild(li);
+    });
 }
