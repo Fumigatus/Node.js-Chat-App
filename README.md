@@ -5,6 +5,4 @@ Realtime chat app using socket.io
 npm install
 npm run watch
 ```
-```
 Go to localhost:3000
-```
